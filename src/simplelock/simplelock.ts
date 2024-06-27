@@ -37,7 +37,7 @@ export class SimpleLock implements Lock {
     return this.lockedKeys.has(key);
   }
 
-  async executeWithLock<T>(callback: () => Promise<T>, key: string, ttl?: number): Promise<T> {
+  async executeWithLock<T = void>(callback: () => Promise<T>, key: string, ttl?: number): Promise<T> {
     await this.acquire(key, ttl);
     const result = await callback();
     await this.release(key);

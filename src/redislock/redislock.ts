@@ -42,7 +42,7 @@ export class RedisLock implements Lock {
     return !!this.locks[key];
   }
 
-  async executeWithLock<T>(callback: () => Promise<T>, key: string, ttl?: number): Promise<T> {
+  async executeWithLock<T = void>(callback: () => Promise<T>, key: string, ttl?: number): Promise<T> {
     await this.acquire(key, ttl);
     const result = await callback();
     await this.release(key);
