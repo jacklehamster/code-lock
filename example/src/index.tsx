@@ -5,10 +5,10 @@
 import React from "react";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { Hello, HelloComponent } from "bun-template";
 
 const div = document.body.appendChild(document.createElement("div"));
 
+const HelloComponent = () => <></>;
 
 //  HelloComponent
 const root = createRoot(div);
@@ -18,8 +18,6 @@ root.render(location.search.indexOf("strict-mode") >= 0 ?
   </StrictMode> : <HelloComponent />
 );
 
-//  Hello
-Hello.hello();
 
 
-export {Hello};
+export {};
