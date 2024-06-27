@@ -15,6 +15,6 @@
   },
   "peerDependencies": {
     "typescript": "^5.0.0",
-    "code-lock": "link:code-lock"
+     "@dobuki/code-lock": "link:@dobuki/code-lock"
   }
 }
