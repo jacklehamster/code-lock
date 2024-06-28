@@ -1,40 +1,40 @@
 import { Lock } from '@/interface/Lock';
-import Redis, { RedisOptions } from 'ioredis';
-import Redlock, { CompatibleRedisClient } from 'redlock';
+import { createClient, RedisClientType, RedisClientOptions } from 'redis';
+
 
 export class RedisLock implements Lock {
-  private redlock: Redlock;
-  locks: Record<string, Redlock.Lock> = {};
+  locks: Record<string, number> = {};
+  redis;
 
   constructor({
-    redlock,
     redis,
     redisOptions,
   }: {
-    redlock?: Redlock;
-    redis?: Redis;
-    redisOptions?: RedisOptions;
+    redis?: RedisClientType;
+    redisOptions?: RedisClientOptions;
   }) {
-    this.redlock = redlock ?? new Redlock([redis as unknown as CompatibleRedisClient], {
-      driftFactor: 0.01,
-      retryCount: 10,
-      retryDelay: 200,
-      retryJitter: 200,
-    }) ?? new Redlock([
-      new Redis(redisOptions!) as unknown as CompatibleRedisClient,
-    ]);
+    if (!redis && !redisOptions) {
+      throw new Error("Missing options");
+    }
+    this.redis = redis ?? createClient(redisOptions);
   }
 
   async acquire(key: string, ttl: number = 5000): Promise<void> {
-    const lock = await this.redlock.acquire([key], ttl);
-    this.locks[key] = lock;
+    const value = `${Date.now()}`;
+    const acquired = await this.setLock(key, value, ttl);
+    if (acquired) {
+      this.locks[key] = parseInt(value, 10);
+    } else {
+      throw new Error(`Could not acquire lock for key: ${key}`);
+    }
   }
 
   async release(key: string): Promise<void> {
-    const lock = this.locks[key];
-    if (lock) {
-      await lock.unlock();
+    if (this.hasLock(key)) {
+      await this.delLock(key);
       delete this.locks[key];
+    } else {
+      throw new Error(`No lock found for key: ${key}`);
     }
   }
 
@@ -44,8 +44,22 @@ export class RedisLock implements Lock {
 
   async executeWithLock<T = void>(callback: () => Promise<T>, key: string, ttl?: number): Promise<T> {
     await this.acquire(key, ttl);
-    const result = await callback();
-    await this.release(key);
-    return result;
+    try {
+      return await callback();
+    } finally {
+      await this.release(key);
+    }
+  }
+
+  private async setLock(key: string, value: string, ttl: number): Promise<boolean> {
+    const result = await this.redis.set(key, value, {
+      NX: true,
+      PX: ttl,
+    });
+    return result === 'OK';
+  }
+
+  private async delLock(key: string): Promise<void> {
+    await this.redis.del(key);
   }
 }
