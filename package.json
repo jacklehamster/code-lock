@@ -2,7 +2,7 @@
   "name": "@dobuki/code-lock",
   "module": "src/index.ts",
   "description": "Use redis or other methods to lock code execution, preventing a resource to be used by two process at the same time",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "keywords": [
     "bun",
     "bunjs",
