@@ -1,5 +1,6 @@
 import { Lock } from "./interface/Lock";
-import { RedisLock } from "./redislock/redislock";
+import { DataClientLock } from "./redislock/dataclient-lock";
 import { SimpleLock } from "./simplelock/simplelock";
 
-export { Lock, RedisLock, SimpleLock };
+export { Lock, DataClientLock as RedisLock, SimpleLock };
+export { executeWithLock } from "./utils/execute-with-lock";

@@ -55,7 +55,6 @@
     "typescript": "^5.0.0"
   },
   "dependencies": {
-    "redis": "^4.6.14",
-    "redis-mock": "^0.56.3"
+    "@dobuki/data-client": "^1.0.1"
   }
 }
