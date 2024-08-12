@@ -55,6 +55,6 @@
     "typescript": "^5.0.0"
   },
   "dependencies": {
-    "@dobuki/data-client": "^1.0.4"
+    "@dobuki/data-client": "^1.0.5"
   }
 }
