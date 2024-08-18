@@ -5,3 +5,4 @@ export { DataClientLock as RedisLock, SimpleLock };
 export { Lock } from "./interface/Lock";
 export { executeWithLock } from "./utils/execute-with-lock";
 export { NoLock } from "./nolock/NoLock";
+export { lockWrap } from "./utils/lock-wrap";
